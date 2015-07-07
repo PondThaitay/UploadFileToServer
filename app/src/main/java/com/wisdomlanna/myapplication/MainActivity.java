@@ -20,11 +20,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import me.iwf.photopicker.PhotoPickerActivity;
 import me.iwf.photopicker.utils.PhotoPickerIntent;
 
 
 public class MainActivity extends Activity {
+    AlertDialog alertDialog = new AlertDialog();
 
     private int counter;
     private static final int REQUEST_CODE = 1;
@@ -93,12 +95,7 @@ public class MainActivity extends Activity {
             String strSDPath;
 
             for (int counterRound = 0; counterRound < counter; counterRound++) {
-                //System.out.println(photos.get(counter));
                 strSDPath = photos.get(counterRound);
-
-                //String strSDPath = params[0];
-                //String strUrlServer = params[1];
-
                 try {
                     FileInputStream fileInputStream = new FileInputStream(new File(strSDPath));
 
@@ -163,10 +160,9 @@ public class MainActivity extends Activity {
                     outputStream.close();
 
                     resServer = resMessage.toString();
-
-
                 } catch (Exception ex) {
                     // Exception handling
+                    alertDialog.alertDialogError("Sorry...", "Internet fail!", context);
                     return null;
                 }
             }
@@ -176,6 +172,17 @@ public class MainActivity extends Activity {
 
         protected void onPostExecute(Void unused) {
             progressDialog.dismiss();
+            new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
+                    .setTitleText("Upload your Image")
+                    .setContentText("Successfully")
+                    .setConfirmText("OK")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismiss();
+                        }
+                    })
+                    .show();
         }
     }
 }
